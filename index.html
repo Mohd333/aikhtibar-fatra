@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مولد جدول الاختبارات الفترية</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" crossorigin="anonymous">
 <style id="pageStyle">@page{size:A4 portrait;margin:0}</style>
 <style>
 *{box-sizing:border-box}
@@ -50,6 +50,9 @@ textarea{resize:vertical;line-height:1.6}
 .tg{margin-bottom:10px}
 #toast{position:fixed;bottom:20px;left:20px;background:#222;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:99;max-width:420px;line-height:1.6}
 .warn{color:#c0392b;font-weight:700;font-size:12px}
+.mdl{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100}
+.mdl>div{background:#fff;border-radius:12px;padding:16px;max-width:520px;width:92%;max-height:90vh;overflow:auto;line-height:1.7}
+.mdl a.btn{display:block;text-align:center;text-decoration:none;margin:6px 0}
 /* ===== الصفحة المطبوعة ===== */
 .page{width:210mm;height:297mm;background:#fff;margin:0 auto 24px;box-shadow:0 4px 18px rgba(0,0,0,.15);overflow:hidden;--k:1;--m:1;--f:1;--p:1;--lh:1.75;position:relative}
 .pin{height:100%;padding:9mm 10mm 6mm;display:flex;flex-direction:column}
@@ -94,7 +97,7 @@ textarea{resize:vertical;line-height:1.6}
 .tm-f{display:flex;gap:8px;margin-top:14px}
 .tprev{font-size:13px;margin-top:6px;padding:6px;background:#f6f7fa;border-radius:6px;line-height:1.7;min-height:10px}
 @media print{
- .ed,.tb-bar,#toast{display:none!important}
+ .ed,.tb-bar,#toast,.mdl{display:none!important}
  body,.pvw{background:#fff;padding:0;overflow:visible}
  .app{display:block;height:auto}
  #pv{zoom:1!important}
@@ -243,8 +246,16 @@ function fmtDate(d){const raw=W(d),hasH=/[هـﻫ]/.test(raw);const s=raw.replac
 const yrTxt=y=>{y=W(y).replace(/[هـﻫ]/g,'').trim();return y?esc(y)+HJ:''};
 const stamp=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds())};
 // تنزيل قابل للتكرار بلا حد + رابط احتياطي يدوي
-function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1500);setTimeout(()=>URL.revokeObjectURL(u),120000);
- toast(`تم التنزيل: ${esc(name)}<br><a href="${u}" download="${esc(name)}" style="color:#8fd3ff">إذا لم يبدأ التنزيل اضغط هنا</a>`,9000)}
+// نافذة ثابتة لا تختفي (بديل عن الرسائل المؤقتة ونوافذ المتصفح التي قد يمنعها كروم)
+function modal(html){let m=document.getElementById('mdl');if(m)m.remove();m=document.createElement('div');m.id='mdl';m.className='mdl';
+ m.innerHTML=`<div>${html}<div style="margin-top:12px;text-align:left"><button class="btn2" onclick="document.getElementById('mdl').remove()">إغلاق</button></div></div>`;
+ m.onclick=e=>{if(e.target===m)m.remove()};document.body.appendChild(m);return m}
+// التنزيل: محاولة تلقائية + روابط ثابتة يضغطها المستخدم بنفسه (تتجاوز منع كروم للتنزيلات المتكررة)
+function dlMany(files){const L=files.map(f=>({u:URL.createObjectURL(f.blob),name:f.name}));
+ L.forEach((f,i)=>setTimeout(()=>{try{const a=document.createElement('a');a.href=f.u;a.download=f.name;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1500)}catch(e){}},i*400));
+ L.forEach(f=>setTimeout(()=>URL.revokeObjectURL(f.u),1800000));
+ modal(`<h4 style="margin:0 0 6px;color:#1f4e9c">الملف جاهز</h4><p class="hint">إذا لم يبدأ التنزيل تلقائيًا فاضغط على اسم الملف:</p>${L.map(f=>`<a class="btn" href="${f.u}" download="${esc(f.name)}">${esc(f.name)}</a>`).join('')}<p class="hint">في كروم: إذا ظهر رمز منع التنزيل في شريط العنوان فاختر «السماح دائمًا بالتنزيلات المتعددة».</p>`)}
+function dl(blob,name){dlMany([{blob,name}])}
 function hx(h){h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))}
 function mix(h,t,a){const A=hx(h),B=hx(t);return'#'+A.map((v,i)=>Math.round(v*(1-a)+B[i]*a).toString(16).padStart(2,'0')).join('')}
 
@@ -367,15 +378,22 @@ function removeLogo(){S.settings.logo=null;buildLogo();save()}
 function setPaper(){$('#pageStyle').textContent=S.paper==='A3'?'@page{size:A3 portrait;margin:0}@media print{.page{zoom:1.41421}}':'@page{size:A4 portrait;margin:0}'}
 function doPrint(){setPaper();setTimeout(()=>window.print(),100)}
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
-async function libs(pdf){try{if(!window.html2canvas)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+// محرك التصوير: يستخدم محرك المتصفح نفسه (يحافظ على اتجاه RTL والخطوط والتنسيق)، ومع احتياطي للمحرك القديم
+async function libs(pdf){try{if(!window.htmlToImage){try{await loadScript('https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js')}catch(e){}}
+ if(!window.htmlToImage&&!window.html2canvas)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
  if(pdf&&!window.jspdf)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');return true}catch(e){toast('التصدير يحتاج اتصالًا بالإنترنت. يمكنك استخدام «طباعة» ثم «حفظ كـ PDF».');return false}}
-async function snap(){const pv=$('#pv'),z=pv.style.zoom;pv.style.zoom=1;await new Promise(r=>setTimeout(r,60));fitAll();const out=[];
- try{for(const p of pv.querySelectorAll('.page')){p.style.boxShadow='none';out.push(await html2canvas(p,{scale:S.paper==='A3'?3:2,useCORS:true,backgroundColor:'#ffffff'}));p.style.boxShadow=''}}
+async function snap(){const pv=$('#pv'),z=pv.style.zoom;pv.style.zoom=1;if(document.fonts)await document.fonts.ready;await new Promise(r=>setTimeout(r,80));fitAll();const out=[],sc=S.paper==='A3'?3:2;
+ try{for(const p of pv.querySelectorAll('.page')){p.style.boxShadow='none';let c;
+  if(window.htmlToImage){const o={pixelRatio:sc,backgroundColor:'#ffffff',width:p.offsetWidth,height:p.offsetHeight,style:{margin:'0',boxShadow:'none',direction:'rtl'}};
+   await htmlToImage.toCanvas(p,o);c=await htmlToImage.toCanvas(p,o)}
+  else c=await html2canvas(p,{scale:sc,useCORS:true,backgroundColor:'#ffffff',onclone:d=>{d.documentElement.setAttribute('dir','rtl')}});
+  out.push(c);p.style.boxShadow=''}}
+ catch(e){toast('تعذّر التصدير في هذا المتصفح. استخدم «طباعة» ثم «حفظ كـ PDF».');throw e}
  finally{pv.style.zoom=z}return out}
 const toBlob=c=>new Promise(r=>c.toBlob(r,'image/png'));
 const fname=()=>S.showAll?'جداول-اختبارات-كل-الصفوف':'جدول-اختبارات-'+curG().name.replace(/\s+/g,'-');
-async function exportPNG(){if(!await libs())return;toast('جارٍ التصدير...');const cs=await snap(),names=S.showAll?S.grades.map(g=>g.name):[curG().name];
- for(let i=0;i<cs.length;i++){dl(await toBlob(cs[i]),'جدول-اختبارات-'+names[i].replace(/\s+/g,'-')+'-'+stamp()+'.png');await new Promise(r=>setTimeout(r,500))}}
+async function exportPNG(){if(!await libs())return;toast('جارٍ التصدير...');const cs=await snap(),names=S.showAll?S.grades.map(g=>g.name):[curG().name],F=[];
+ for(let i=0;i<cs.length;i++)F.push({blob:await toBlob(cs[i]),name:'جدول-اختبارات-'+names[i].replace(/\s+/g,'-')+'-'+stamp()+'.png'});dlMany(F)}
 async function exportPDF(){if(!await libs(true))return;toast('جارٍ إنشاء PDF...');const cs=await snap(),f=S.paper==='A3'?'a3':'a4',[w,h]=f==='a3'?[297,420]:[210,297];
  const doc=new window.jspdf.jsPDF({unit:'mm',format:f,orientation:'portrait'});cs.forEach((c,i)=>{if(i)doc.addPage(f,'portrait');doc.addImage(c.toDataURL('image/jpeg',.95),'JPEG',0,0,w,h)});dl(doc.output('blob'),fname()+'-'+stamp()+'.pdf')}
 
@@ -386,10 +404,14 @@ function clearSpecs(){if(!confirm('مسح كل التحديدات والملاح
 function resetAll(){if(!confirm('إعادة ضبط كل شيء؟ (يفضل تنزيل نسخة احتياطية أولًا)'))return;S=defaults();init();save()}
 
 // ===== المعلمون والاستيراد =====
-function copyTxt(t){if(navigator.clipboard)navigator.clipboard.writeText(t).catch(()=>prompt('انسخ:',t));else prompt('انسخ:',t)}
+// النسخ: طريقة مباشرة تعمل في كروم والجوال، ثم الحافظة، وإن فشل الاثنان تظهر نافذة للنسخ اليدوي
+function copyTxt(t,okMsg){const done=()=>toast(okMsg||'تم النسخ');let ok=false;
+ try{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;right:0;opacity:0;font-size:16px';document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);ok=document.execCommand('copy');ta.remove()}catch(e){}
+ if(ok)return done();
+ if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done).catch(()=>manualCopy(t));else manualCopy(t)}
+function manualCopy(t){const m=modal(`<h4 style="margin:0 0 6px;color:#1f4e9c">انسخ النص يدويًا</h4><p class="hint">اضغط مطولًا داخل المربع ثم «تحديد الكل» ثم «نسخ».</p><textarea id="mcp" rows="8" readonly></textarea>`);const ta=m.querySelector('#mcp');ta.value=t;ta.focus();ta.select()}
 function teacherStruct(){const st=S.settings;return{s:st.school,w:st.wa,p:st.titlePrefix+' '+st.period,y:st.year,g:S.grades.map(g=>[g.name,g.rows.map(r=>r.subject).filter(Boolean),g.c1])}}
-function teacherLink(){const url=location.href.split('#')[0]+'#t='+b64e(JSON.stringify(teacherStruct()));copyTxt(url);
- toast(location.protocol==='file:'?'نُسخ الرابط، لكنه لن يعمل عند المعلمين إلا بعد نشر الملف على رابط إنترنت (مثل GitHub Pages).':'نُسخ رابط المعلمين، أرسله في مجموعة المعلمين.')}
+function teacherLink(){const url=location.href.split('#')[0]+'#t='+b64e(JSON.stringify(teacherStruct()));copyTxt(url,location.protocol==='file:'?'نُسخ الرابط، لكنه لن يعمل عند المعلمين إلا بعد نشر الملف على رابط إنترنت (مثل GitHub Pages).':'نُسخ رابط المعلمين، أرسله في مجموعة المعلمين.')}
 function openTeacher(){window.open(location.href.split('#')[0]+'#t='+b64e(JSON.stringify(teacherStruct())),'_blank')}
 function applyEntry(gn,sub,sec,text,note,by){const g=S.grades.find(x=>same(x.name,gn));if(!g||!sub||!text)return false;
  let r=g.rows.find(x=>same(x.subject,sub));if(!r){r=mkRow('','',sub);g.rows.push(r)}
@@ -408,7 +430,7 @@ function renderTrack(){const el=$('#track');if(!el)return;let tot=0,done=0;
   const by=[...new Set(r.parts.map(p=>p.by).filter(Boolean))].join('، ');return`<div class="tr ${f?'ok':'no'}">${f?'✔':'✖'} ${esc(r.subject||'(بدون مادة)')} <small>${esc(r.day)} ${esc(r.date)}</small>${by?` <small>— ${esc(by)}</small>`:''}</div>`}).join('')}</div>`).join('');
  $('#trackSum').textContent=`(اكتمل ${done} من ${tot})`}
 function copyMissing(){const L=[];S.grades.forEach(g=>g.rows.forEach(r=>{if(!r.parts.every(p=>p.text.trim()))L.push(`- ${g.name}: ${r.subject||'؟'}`)}));
- if(!L.length)return toast('كل التحديدات مكتملة');copyTxt('نأمل التكرم بإرسال تحديد الاختبار للمواد التالية:\n'+L.join('\n'));toast('نُسخت القائمة')}
+ if(!L.length)return toast('كل التحديدات مكتملة');copyTxt('نأمل التكرم بإرسال تحديد الاختبار للمواد التالية:\n'+L.join('\n'),'نُسخت القائمة')}
 
 // ===== وضع المعلم =====
 let T,TE;
@@ -434,8 +456,11 @@ function tMsg(){if(!TE.n.trim()){toast('اكتب اسمك أولًا');return nu
  const P={n:TE.n.trim(),e:E.map(x=>({g:T.g[x.g][0],s:x.s,c:x.c,t:x.t,o:x.o}))};
  return`تحديد ${T.p}\nالمعلم: ${P.n}\n\n`+P.e.map(x=>`▪ ${x.g} - ${x.s}${x.c?' ('+x.c+')':''}:\n${x.t}${x.o?'\nملاحظة: '+x.o:''}`).join('\n\n')+`\n\n(رمز الدمج، لا تعدّله)\nTQ1:${b64e(JSON.stringify(P))}`}
 function tSend(){const m=tMsg();if(!m)return;let n=String(T.w||'').replace(/\D/g,'');if(n.startsWith('05'))n='966'+n.slice(1);else if(n.length===9&&n.startsWith('5'))n='966'+n;
- window.open('https://wa.me/'+n+'?text='+encodeURIComponent(m),'_blank')}
-function tCopy(){const m=tMsg();if(m){copyTxt(m);toast('نُسخت الرسالة، الصقها في واتساب')}}
+ const url='https://wa.me/'+n+'?text='+encodeURIComponent(m);
+ try{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove()}catch(e){}
+ const md=modal(`<h4 style="margin:0 0 6px;color:#1f4e9c">إرسال التحديد</h4><p class="hint">إذا لم يفتح واتساب تلقائيًا فاضغط الزر:</p><a class="btn" href="${esc(url)}" target="_blank" rel="noopener">فتح واتساب</a><button class="btn2" style="width:100%;margin-top:6px" id="mcpb">نسخ الرسالة بدلًا من ذلك</button>`);
+ md.querySelector('#mcpb').onclick=()=>copyTxt(m,'نُسخت الرسالة، الصقها في واتساب')}
+function tCopy(){const m=tMsg();if(m)copyTxt(m,'نُسخت الرسالة، الصقها في واتساب')}
 
 // ===== التشغيل =====
 function init(){fillSettings();renderEditor();buildLogo();renderTrack()}
