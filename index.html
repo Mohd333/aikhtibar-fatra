@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مولد جدول الاختبارات الفترية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style id="pageStyle">@page{size:A4 portrait;margin:0}</style>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Tajawal',Tahoma,Arial,sans-serif;background:#eef0f4;color:#222;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+.app{display:flex;height:100vh}
+.ed{width:470px;min-width:470px;background:#fff;border-left:1px solid #dde;display:flex;flex-direction:column}
+.ed-h{padding:12px 14px;background:#1f4e9c;color:#fff;font-weight:800;font-size:17px;display:flex;justify-content:space-between;align-items:center}
+.ed-h small{font-weight:400;font-size:12px;opacity:.85}
+.tabs{display:flex;border-bottom:1px solid #dde}
+.tabs button{flex:1;padding:10px 4px;border:0;background:#f6f7fa;cursor:pointer;font-weight:700;color:#555;border-bottom:3px solid transparent}
+.tabs button.on{background:#fff;color:#1f4e9c;border-bottom-color:#1f4e9c}
+.tab{display:none;padding:14px;overflow:auto;flex:1}
+.tab.on{display:block}
+label{display:block;font-size:13px;font-weight:700;color:#444;margin:8px 0 3px}
+input[type=text],input:not([type]),select,textarea{width:100%;padding:7px 9px;border:1px solid #cfd3dc;border-radius:8px;background:#fff}
+textarea{resize:vertical;line-height:1.6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.box{border:1px solid #e3e6ee;border-radius:10px;padding:10px 12px;margin:10px 0;background:#fafbfd}
+.box h4{margin:0 0 6px;font-size:14px;color:#1f4e9c}
+.btn{background:#1f4e9c;color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:700}
+.btn2{background:#fff;color:#1f4e9c;border:1px solid #1f4e9c;border-radius:8px;padding:7px 12px;cursor:pointer;font-weight:700}
+.btnr{background:#fff;color:#c0392b;border:1px solid #c0392b;border-radius:8px;padding:6px 10px;cursor:pointer}
+.hint{font-size:12px;color:#777;line-height:1.7;margin:4px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:2px solid;border-radius:20px;padding:5px 12px;cursor:pointer;font-weight:700;background:#fff}
+.row-card{border:1.5px solid;border-radius:10px;padding:8px;margin:10px 0;background:#fff}
+.rc-top{display:flex;gap:5px;align-items:center}
+.rc-top select{width:95px}.rc-top .w-date{width:100px}
+.rc-top button{border:1px solid #ccd;background:#fff;border-radius:6px;cursor:pointer;padding:5px 7px}
+.num{color:#fff;border-radius:50%;min-width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.part-ed{border-top:1px dashed #ccd;margin-top:7px;padding-top:7px}
+.part-ed textarea,.part-ed input{margin-top:4px}
+.by{font-size:11px;color:#2c7a4b;white-space:nowrap}
+.lnk{border:0;background:none;color:#1f4e9c;cursor:pointer;font-weight:700;padding:6px 0}
+.flex{display:flex;gap:6px;align-items:center}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.tb-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 14px;background:#fff;border-bottom:1px solid #dde}
+.tb-bar select{width:auto}
+.pvw{flex:1;overflow:auto;padding:20px}
+.tr{font-size:13px;padding:3px 6px;border-radius:6px;margin:2px 0}
+.tr.ok{background:#e7f6ee}.tr.no{background:#fdecea}
+.tg{margin-bottom:10px}
+#toast{position:fixed;bottom:20px;left:20px;background:#222;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:99;max-width:420px;line-height:1.6}
+.warn{color:#c0392b;font-weight:700;font-size:12px}
+/* ===== الصفحة المطبوعة ===== */
+.page{width:210mm;height:297mm;background:#fff;margin:0 auto 24px;box-shadow:0 4px 18px rgba(0,0,0,.15);overflow:hidden;--k:1;--m:1;position:relative}
+.pin{height:100%;padding:9mm 10mm 6mm;display:flex;flex-direction:column}
+.hd{display:flex;align-items:center;gap:14px;border:1.5px solid var(--c2);border-radius:14px;padding:8px 16px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.hd img{display:block;max-width:150px;object-fit:contain}
+.vl{width:2px;align-self:stretch;background:var(--c1);opacity:.55;margin:6px 0}
+.sch{flex:1;text-align:center}
+.s1{font-weight:800;color:#1f4e9c;font-size:22px}
+.s2{font-size:14px;color:#444;margin-top:3px}
+.ph{flex:0 0 28%;text-align:center;font-weight:800;color:var(--c3);font-size:18px}
+.ttl{text-align:center;font-size:36px;font-weight:800;color:var(--c3);margin:14px 0 2px}
+.sub{text-align:center;color:#555;font-size:16px;font-weight:500}
+.pill{align-self:center;background:var(--c1);color:#fff;font-weight:800;font-size:21px;padding:6px 46px;border-radius:30px;margin:10px 0 12px}
+.tbl{width:100%;border-collapse:separate;border-spacing:0;border:2px solid var(--c1);border-radius:12px;overflow:hidden;font-size:calc(14px*var(--k))}
+.tbl th{background:var(--c1);color:#fff;padding:9px;font-size:calc(16px*var(--k));font-weight:800;border-left:1.5px solid rgba(255,255,255,.75)}
+.tbl th:last-child{border-left:0}
+.tbl td{padding:calc(9px*var(--k)) 10px;border-top:1.5px solid var(--c1);border-left:1.5px solid var(--c1);vertical-align:middle}
+.tbl td:last-child{border-left:0}
+.tbl tbody tr:nth-child(odd) td{background:#fff}
+.tbl tbody tr:nth-child(even) td{background:var(--c2)}
+.tbl td.dy{font-weight:800;color:var(--c3);text-align:center;width:12%;font-size:calc(16px*var(--k))}
+.tbl td.dt{text-align:center;width:16%;font-weight:700}
+.tbl td.sb{font-weight:800;color:var(--c3);text-align:center;width:16%;font-size:calc(19px*var(--k))}
+.tbl td.sp{line-height:1.75}
+.pg{font-weight:800;color:var(--c3)}
+.n{font-weight:800}
+.sec{display:inline-block;background:var(--c1);color:#fff;border-radius:6px;padding:0 8px;font-size:.85em;font-weight:700;margin-bottom:2px}
+.part+.part{border-top:1px dashed var(--c1);margin-top:6px;padding-top:6px}
+.note{font-size:.86em;color:#333;font-weight:600;margin-top:2px}
+.gap{flex:1;min-height:calc(8px*var(--m))}
+.nt{background:var(--c2);border-radius:12px;padding:calc(10px*var(--m)) 14px;font-size:calc(14px*var(--m))}
+.nth{font-weight:800;color:var(--c3);margin-bottom:6px;font-size:1.1em}
+.nt ol{list-style:none;margin:0;padding:0;counter-reset:n}
+.nt li{counter-increment:n;display:flex;gap:8px;align-items:flex-start;margin:calc(5px*var(--m)) 0;line-height:1.55}
+.nt li::before{content:counter(n);background:var(--c1);color:#fff;min-width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+.cl{margin-top:calc(10px*var(--m));background:var(--c1);color:#fff;border-radius:12px;padding:calc(12px*var(--m)) 18px;display:flex;justify-content:space-between;font-weight:800;font-size:calc(17px*var(--m))}
+.ft{text-align:center;font-size:11px;color:#777;margin-top:6px}
+/* ===== وضع المعلم ===== */
+.tm{max-width:640px;margin:20px auto;background:#fff;border-radius:14px;padding:18px;box-shadow:0 4px 18px rgba(0,0,0,.1)}
+.tm-h{background:#1f4e9c;color:#fff;border-radius:10px;padding:12px;text-align:center;margin-bottom:10px}
+.tm-h h2{margin:0 0 4px}
+.tm-f{display:flex;gap:8px;margin-top:14px}
+.tprev{font-size:13px;margin-top:6px;padding:6px;background:#f6f7fa;border-radius:6px;line-height:1.7;min-height:10px}
+@media print{
+ .ed,.tb-bar,#toast{display:none!important}
+ body,.pvw{background:#fff;padding:0;overflow:visible}
+ .app{display:block;height:auto}
+ #pv{zoom:1!important}
+ .page{box-shadow:none;margin:0;break-after:page;page-break-after:always}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="ed">
+  <div class="ed-h"><span>مولد جدول الاختبارات</span><small id="saveInd">محفوظ تلقائيًا</small></div>
+  <div class="tabs">
+   <button data-tab="t1" class="on">الإعدادات</button>
+   <button data-tab="t2">الصفوف والجدول</button>
+   <button data-tab="t3">المعلمون واللصق</button>
+   <button data-tab="t4">النسخ الاحتياطي</button>
+  </div>
+
+  <!-- الإعدادات -->
+  <section class="tab on" id="t1">
+   <div class="box"><h4>الترويسة</h4>
+    <label>اسم المدرسة</label><input data-s="school">
+    <label>الإدارة</label><input data-s="admin">
+    <label>العبارة الجانبية</label>
+    <select data-s="phraseSel"><option>التوجيه الطلابي</option><option>شؤون الطلاب</option><option>أخرى</option></select>
+    <input data-s="phraseCustom" id="phraseCustom" placeholder="اكتب العبارة" style="margin-top:5px">
+   </div>
+   <div class="box"><h4>الشعار</h4>
+    <div class="flex"><img id="logoThumb" style="height:50px;max-width:120px;border:1px dashed #ccd;border-radius:6px;padding:2px" alt="">
+     <label class="btn2" style="margin:0">إرفاق شعار<input type="file" accept="image/*" id="logoFile" hidden></label>
+     <button class="btn2" onclick="autoTrim()">قص تلقائي</button>
+     <button class="btnr" onclick="removeLogo()">حذف</button></div>
+    <label>حجم الشعار</label><input type="range" min="30" max="130" data-s="logoH" style="width:100%">
+    <div class="grid2">
+     <div><label>قص من الأعلى</label><input type="range" min="0" max="45" data-crop="t" style="width:100%"></div>
+     <div><label>قص من الأسفل</label><input type="range" min="0" max="45" data-crop="b" style="width:100%"></div>
+     <div><label>قص من اليمين</label><input type="range" min="0" max="45" data-crop="r" style="width:100%"></div>
+     <div><label>قص من اليسار</label><input type="range" min="0" max="45" data-crop="l" style="width:100%"></div>
+    </div>
+    <p class="hint">إذا نشرت الأداة على رابط، ضع ملف الشعار باسم <b>logo.png</b> بجوار هذا الملف ليظهر تلقائيًا بدون رفع.</p>
+   </div>
+   <div class="box"><h4>العنوان</h4>
+    <div class="grid2">
+     <div><label>بداية العنوان</label><input data-s="titlePrefix"></div>
+     <div><label>الفترة</label><input data-s="period" list="periods"></div>
+     <div><label>الفصل الدراسي</label><input data-s="semester" list="sems"></div>
+     <div><label>العام (هـ)</label><input data-s="year"></div>
+    </div>
+   </div>
+   <div class="box"><h4>التنبيهات</h4>
+    <label>عنوان التنبيهات</label><input data-s="notesTitle">
+    <label>النقاط (كل سطر نقطة)</label><textarea data-s="notes" rows="5"></textarea>
+   </div>
+   <div class="box"><h4>الخاتمة</h4>
+    <label>عبارة الختام</label><input data-s="closing">
+    <label>اسم مدير المدرسة</label><input data-s="principal">
+   </div>
+  </section>
+
+  <!-- الصفوف -->
+  <section class="tab" id="t2">
+   <div class="chips" id="chips"></div>
+   <div class="box" id="gprops"></div>
+   <div id="rows"></div>
+   <button class="btn" onclick="addRow()">+ إضافة يوم</button>
+   <button class="btn2" onclick="copyDates()">نسخ الأيام والتواريخ إلى كل الصفوف</button>
+   <div class="box"><h4>إضافة صف جديد</h4>
+    <div class="flex"><input id="ngName" placeholder="مثال: الصف الأول المتوسط"><input type="color" id="ngColor" value="#C2185B" style="width:50px;height:34px"><button class="btn" onclick="addGrade()">إضافة</button></div>
+    <p class="hint">تُولَّد الدرجة الفاتحة والعميقة من اللون تلقائيًا، ويمكنك تعديلها بعد ذلك.</p>
+   </div>
+  </section>
+
+  <!-- المعلمون -->
+  <section class="tab" id="t3">
+   <div class="box"><h4>١) رابط المعلمين</h4>
+    <label>رقم واتساب المستلم (منسق الجدول)</label><input data-s="wa" placeholder="05xxxxxxxx">
+    <p class="hint">يفتح المعلم الرابط، فيختار الصف والمادة ويكتب التحديد ثم يضغط «إرسال». تصلك رسالة واتساب جاهزة في آخرها رمز يبدأ بـ TQ1.<br>أنشئ الرابط <b>بعد</b> إدخال المواد في تبويب الصفوف.</p>
+    <button class="btn" onclick="teacherLink()">نسخ رابط المعلمين</button>
+    <button class="btn2" onclick="openTeacher()">تجربة نموذج المعلم</button>
+   </div>
+   <div class="box"><h4>٢) الاستيراد والدمج</h4>
+    <p class="hint">الصق هنا رسائل المعلمين كما وصلتك (رسالة أو عدة رسائل معًا)، أو أسطر اللصق الجماعي بهذا الشكل:<br>
+    <b>الصف | المادة | التحديد | الفصل (اختياري) | ملاحظة (اختياري)</b><br>
+    مثال: <code>الرابع | علوم | الفصل الثالث // من ص 40 إلى ص 77</code><br>الرمز <b>//</b> يعني سطرًا جديدًا داخل التحديد.</p>
+    <textarea id="imp" rows="7" placeholder="الصق هنا..."></textarea>
+    <button class="btn" onclick="doImport()">استيراد ودمج</button>
+    <div id="impRes" class="hint"></div>
+   </div>
+   <div class="box"><h4>٣) متابعة الاكتمال <span id="trackSum" class="hint"></span></h4>
+    <button class="btn2" onclick="copyMissing()">نسخ قائمة المواد الناقصة (للتذكير)</button>
+    <div id="track" style="margin-top:8px"></div>
+   </div>
+  </section>
+
+  <!-- النسخ الاحتياطي -->
+  <section class="tab" id="t4">
+   <div class="box"><h4>النسخ الاحتياطي</h4>
+    <p class="hint">تشمل النسخة كل البيانات: الإعدادات والشعار والصفوف والتحديدات.</p>
+    <button class="btn" onclick="backup()">تنزيل نسخة احتياطية</button>
+    <label class="btn2" style="display:inline-block">استرجاع نسخة<input type="file" accept=".json" id="restoreFile" hidden></label>
+   </div>
+   <div class="box"><h4>فترة جديدة</h4>
+    <p class="hint">تمسح التحديدات فقط وتُبقي الإعدادات والصفوف والمواد.</p>
+    <button class="btn2" onclick="clearSpecs()">مسح التحديدات</button>
+    <button class="btnr" onclick="resetAll()">إعادة ضبط كاملة</button>
+   </div>
+  </section>
+ </aside>
+
+ <main class="main">
+  <div class="tb-bar">
+   <label style="margin:0" class="flex"><input type="checkbox" data-t="showAll"> عرض كل الصفوف</label>
+   <span class="flex">تكبير العرض <input type="range" min="0.4" max="1.2" step="0.05" data-t="zoom"></span>
+   <select data-t="paper"><option value="A4">A4</option><option value="A3">A3</option></select>
+   <button class="btn" onclick="doPrint()">طباعة</button>
+   <button class="btn2" onclick="exportPDF()">تصدير PDF</button>
+   <button class="btn2" onclick="exportPNG()">تصدير صورة</button>
+   <span id="fitWarn" class="warn"></span>
+  </div>
+  <div class="pvw"><div id="pv"></div></div>
+ </main>
+</div>
+
+<datalist id="subjList"><option>لغتي</option><option>رياضيات</option><option>علوم</option><option>اللغة الإنجليزية</option><option>الدراسات الإسلامية</option><option>القرآن الكريم</option><option>الدراسات الاجتماعية</option><option>المهارات الرقمية</option><option>التربية الفنية</option><option>التربية البدنية</option><option>التفكير الناقد</option><option>المهارات الحياتية والأسرية</option></datalist>
+<datalist id="periods"><option>الفترة الأولى</option><option>الفترة الثانية</option><option>الفترة الثالثة</option></datalist>
+<datalist id="sems"><option>الفصل الدراسي الأول</option><option>الفصل الدراسي الثاني</option><option>الفصل الدراسي الثالث</option></datalist>
+<div id="toast"></div>
+
+<script>
+const KEY='tq_exam_v1';
+const DAYS=['','الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'];
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const W=s=>String(s??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const b64e=s=>btoa(unescape(encodeURIComponent(s))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';return decodeURIComponent(escape(atob(s)))};
+const norm=s=>W(s).replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,'').replace(/^الصف/,'').replace(/^ال/,'');
+const same=(a,b)=>{a=norm(a);b=norm(b);return a&&b&&(a===b||a.includes(b)||b.includes(a))};
+function toast(m,ms){const t=$('#toast');t.innerHTML=m;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',ms||4000)}
+// حرف الهاء بصيغة البداية (ﻫـ) ليظهر ممدودًا دائمًا حتى في التصدير
+const HJ='\uFEEBـ';
+// التاريخ: يُكتب طبيعيًا (اليوم/الشهر/العام) ويُعرض من اليمين: اليوم ثم الشهر ثم العام
+function fmtDate(d){const s=W(d).replace(/[هـﻫ]/g,'').trim();let a=s.split(/[\s\/\\\-.]+/).filter(Boolean);if(!a.length)return'';
+ if(a.length===3&&a[0].length===4&&a[2].length<=2)a.reverse();
+ const last=a.length-1,out=a.map((x,i)=>esc(x)+(i===last&&x.length===4?HJ:''));return out.join('\u200F / \u200F')}
+const stamp=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds())};
+// تنزيل قابل للتكرار بلا حد + رابط احتياطي يدوي
+function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1500);setTimeout(()=>URL.revokeObjectURL(u),120000);
+ toast(`تم التنزيل: ${esc(name)}<br><a href="${u}" download="${esc(name)}" style="color:#8fd3ff">إذا لم يبدأ التنزيل اضغط هنا</a>`,9000)}
+function hx(h){h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))}
+function mix(h,t,a){const A=hx(h),B=hx(t);return'#'+A.map((v,i)=>Math.round(v*(1-a)+B[i]*a).toString(16).padStart(2,'0')).join('')}
+
+// تنسيق التحديد: أرقام غربية + إبراز الصفحات والأرقام
+function fmt(t){
+ t=esc(W(t));
+ const re=/((?:من\s*)?(?:ص|صفحة|صفحات|الصفحات)\s*[:.]?\s*\d+(?:\s*(?:[-–،,]|إلى|الى|حتى|و)\s*(?:ص\s*)?\d+)*)/g;
+ return t.split(re).map((p,i)=>i%2?`<b class="pg">${p}</b>`:p.replace(/\d+/g,'<b class="n">$&</b>')).join('').replace(/\n/g,'<br>');
+}
+
+function mkRow(day,date,subject,parts){return{id:uid(),day,date,subject,parts:parts||[{sec:'',text:'',note:''}]}}
+function mkGrade(name,c1,c2,c3,rows){return{id:uid(),name,c1,c2,c3,rows:rows||[]}}
+function defaults(){
+ const base=[['الخميس','23/6/1448','علوم'],['الأحد','26/6/1448','رياضيات'],['الاثنين','27/6/1448','لغتي'],['الأربعاء','29/6/1448','اللغة الإنجليزية']];
+ const g=[['الصف الثالث','#7258A4','#EFEAF7','#5A4488'],['الصف الرابع','#3D7EB9','#E4EEF8','#2C5F93'],['الصف الخامس','#07A869','#E3F5EC','#057A4D'],['الصف السادس','#E27A2E','#FCEBDD','#B85A14']]
+  .map(a=>mkGrade(...a,base.map(b=>mkRow(...b))));
+ const r=g[0].rows;
+ r[0].parts=[{sec:'',text:'الفصل الرابع: الدرس الأول والدرس الثاني - الفصل الخامس: الدرس الأول والدرس الثاني\nمن ص 105 إلى ص 147',note:''}];
+ r[1].parts=[{sec:'',text:'الوحدة الثالثة والوحدة الرابعة\nمن ص 80 إلى ص 139',note:'سيحمل الطالب أوراق عمل تساعد على المذاكرة.'}];
+ r[2].parts=[{sec:'',text:'الوحدة الثالثة: درس التعاون ودرس الإيثار\nمن ص 102 إلى ص 134',note:''}];
+ r[3].parts=[{sec:'فصل أ، ب',text:'الوحدات (4 - 5 - 6)\nمن ص 36 إلى ص 39 + اختبار عملي',note:''},{sec:'فصل ج',text:'المذاكرة من أوراق العمل التي ستوزع لاحقًا',note:''}];
+ return{settings:{school:'مدرسة حنين الابتدائية',admin:'الإدارة العامة للتعليم بالمنطقة الشرقية',phraseSel:'التوجيه الطلابي',phraseCustom:'',
+  logo:null,logoH:70,crop:{t:0,r:0,b:0,l:0},titlePrefix:'جدول اختبارات',period:'الفترة الثانية',semester:'الفصل الدراسي الأول',year:'1448',
+  notesTitle:'تنبيهات للطالب وولي الأمر',
+  notes:'الاختبار خلال اليوم الدراسي وفق الجدول اليومي، ويعود الطالب إلى حصصه بعده.\nإحضار الكتاب والأدوات المدرسية، والنوم المبكر في ليلة الاختبار.\nمراجعة الدروس المحددة مع المعلم أولًا بأول، والتواصل معه عند أي استفسار.\nالحرص على إحضار قلم الرصاص والممحاة يوم الاختبار.',
+  closing:'دعواتنا للجميع بالتوفيق والنجاح',principal:'أ/ فيحان بن عائد البقمي',wa:''},
+  grades:g,cur:g[0].id,showAll:false,zoom:0.75,paper:'A4'};
+}
+function normalize(o){const d=defaults();o=o||{};o.settings={...d.settings,...(o.settings||{})};o.settings.crop={...d.settings.crop,...(o.settings.crop||{})};
+ if(!o.grades||!o.grades.length)o.grades=d.grades;['showAll','zoom','paper'].forEach(k=>{if(o[k]===undefined)o[k]=d[k]});if(!o.cur)o.cur=o.grades[0].id;return o}
+let S;try{S=normalize(JSON.parse(localStorage.getItem(KEY)))}catch(e){S=defaults()}
+let LOGO=null,_sv;
+function save(){$('#saveInd').textContent='جارٍ الحفظ...';clearTimeout(_sv);_sv=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(S));$('#saveInd').textContent='محفوظ تلقائيًا'}catch(e){$('#saveInd').textContent='تعذّر الحفظ';toast('تعذّر الحفظ التلقائي، وقد يكون حجم الشعار كبيرًا. نزّل نسخة احتياطية.')}},300)}
+const curG=()=>S.grades.find(g=>g.id===S.cur)||S.grades[0];
+const findRow=id=>{for(const g of S.grades){const r=g.rows.find(r=>r.id===id);if(r)return r}};
+const phrase=()=>S.settings.phraseSel==='أخرى'?S.settings.phraseCustom:S.settings.phraseSel;
+
+// ===== الصفحة =====
+function pageHTML(g){
+ const st=S.settings,ph=esc(phrase());
+ const rows=g.rows.map(r=>`<tr><td class="dy">${esc(r.day)}</td><td class="dt">${r.date?`<span dir="rtl">${fmtDate(r.date)}</span>`:''}</td><td class="sb">${esc(r.subject)}</td>
+  <td class="sp">${r.parts.map(p=>`<div class="part">${p.sec?`<span class="sec">${esc(p.sec)}</span><br>`:''}${p.text.trim()?fmt(p.text):'—'}${p.note?`<div class="note">ملاحظة: ${fmt(p.note)}</div>`:''}</div>`).join('')}</td></tr>`).join('');
+ const notes=st.notes.split('\n').filter(x=>x.trim()).map(x=>`<li><span>${fmt(x)}</span></li>`).join('');
+ return `<div class="page" style="--c1:${g.c1};--c2:${g.c2};--c3:${g.c3}"><div class="pin">
+ <header class="hd"><img src="${LOGO||'logo.png'}" style="height:${st.logoH}px" onerror="this.style.display='none'"><div class="vl"></div>
+ <div class="sch"><div class="s1">${esc(st.school)}</div><div class="s2">${esc(st.admin)}</div></div><div class="vl"></div><div class="ph">${ph}</div></header>
+ <h1 class="ttl">${esc(st.titlePrefix)} ${esc(st.period)}</h1>
+ <div class="sub">${esc(st.semester)} – العام الدراسي ${esc(W(st.year).replace(/[هـﻫ]/g,'').trim())}${HJ}</div>
+ <div class="pill">${esc(g.name)}</div>
+ <table class="tbl"><thead><tr><th>اليوم</th><th>التاريخ</th><th>المادة</th><th>تحديد الاختبار</th></tr></thead><tbody>${rows}</tbody></table>
+ <div class="gap"></div>
+ ${notes?`<div class="nt"><div class="nth">${esc(st.notesTitle)}</div><ol>${notes}</ol></div>`:''}
+ <div class="cl"><span>${esc(st.closing)}</span><span>مدير المدرسة: ${esc(st.principal)}</span></div>
+ <div class="ft">${ph} - ${esc(st.school)} - العام ${esc(W(st.year).replace(/[هـﻫ]/g,'').trim())}${HJ}</div></div></div>`;
+}
+function renderPreview(){const pv=$('#pv');pv.innerHTML=(S.showAll?S.grades:[curG()]).map(pageHTML).join('');pv.style.zoom=S.zoom;requestAnimationFrame(fitAll)}
+function fitAll(){let bad=0;document.querySelectorAll('#pv .page').forEach(p=>{const pin=p.firstElementChild,over=()=>pin.scrollHeight>pin.clientHeight+1;let k=1.15,m=1;p.style.setProperty('--k',k);p.style.setProperty('--m',m);
+ // 1) تصغير الجدول قليلًا  2) ثم تصغير التنبيهات وخانة المدير  3) ثم الجدول أكثر
+ while(over()&&k>.88){k-=.03;p.style.setProperty('--k',k.toFixed(2))}
+ while(over()&&m>.68){m-=.04;p.style.setProperty('--m',m.toFixed(2))}
+ while(over()&&k>.6){k-=.03;p.style.setProperty('--k',k.toFixed(2))}if(over())bad++});
+ $('#fitWarn').textContent=bad?'تنبيه: المحتوى أطول من الصفحة، فاختصر التحديد أو التنبيهات.':''}
+
+// ===== المحرر =====
+function renderEditor(){
+ const g=curG();
+ $('#chips').innerHTML=S.grades.map(x=>`<span class="chip" style="border-color:${x.c1};${x.id===g.id?`background:${x.c1};color:#fff`:`color:${x.c3}`}" onclick="selGrade('${x.id}')">${esc(x.name)}</span>`).join('');
+ $('#gprops').innerHTML=`<div class="flex"><input data-gp="name" value="${esc(g.name)}"><button class="btnr" onclick="delGrade()">حذف الصف</button></div>
+ <div class="flex" style="margin-top:6px;font-size:12px">أساسي<input type="color" data-gp="c1" value="${g.c1}">فاتح<input type="color" data-gp="c2" value="${g.c2}">عميق<input type="color" data-gp="c3" value="${g.c3}"><button class="lnk" onclick="genShades()">توليد الدرجات</button></div>`;
+ $('#rows').innerHTML=g.rows.map((r,i)=>`<div class="row-card" style="border-color:${g.c1}">
+ <div class="rc-top"><span class="num" style="background:${g.c1}">${i+1}</span>
+ <select data-r="${r.id}" data-f="day">${DAYS.map(d=>`<option value="${d}" ${d===r.day?'selected':''}>${d||'— اليوم —'}</option>`).join('')}</select>
+ <input class="w-date" dir="ltr" data-r="${r.id}" data-f="date" value="${esc(r.date)}" placeholder="23/6/1448" title="اكتب: اليوم/الشهر/العام — وحرف هـ اختياري">
+ <input data-r="${r.id}" data-f="subject" value="${esc(r.subject)}" placeholder="المادة" list="subjList">
+ <button onclick="mvRow('${r.id}',-1)" title="أعلى">▲</button><button onclick="mvRow('${r.id}',1)" title="أسفل">▼</button><button onclick="delRow('${r.id}')" title="حذف">🗑</button></div>
+ ${r.parts.map((p,j)=>`<div class="part-ed"><div class="flex"><input data-r="${r.id}" data-p="${j}" data-f="sec" value="${esc(p.sec)}" placeholder="الفصل (اختياري) مثل: فصل أ، ب">
+  ${p.by?`<span class="by">من: ${esc(p.by)}</span>`:''}${r.parts.length>1?`<button class="btnr" onclick="delPart('${r.id}',${j})">✕</button>`:''}</div>
+  <textarea data-r="${r.id}" data-p="${j}" data-f="text" rows="3" placeholder="التحديد، مثل: الوحدة الثالثة - من ص 80 إلى ص 139">${esc(p.text)}</textarea>
+  <input data-r="${r.id}" data-p="${j}" data-f="note" value="${esc(p.note)}" placeholder="ملاحظة (اختياري)"></div>`).join('')}
+ <button class="lnk" onclick="addPart('${r.id}')">+ تحديد مختلف لفصل آخر</button></div>`).join('');
+}
+function fillSettings(){document.querySelectorAll('[data-s]').forEach(el=>el.value=S.settings[el.dataset.s]??'');
+ document.querySelectorAll('[data-crop]').forEach(el=>el.value=S.settings.crop[el.dataset.crop]);
+ document.querySelectorAll('[data-t]').forEach(el=>{if(el.type==='checkbox')el.checked=!!S[el.dataset.t];else el.value=S[el.dataset.t]});togglePhrase()}
+function togglePhrase(){$('#phraseCustom').style.display=S.settings.phraseSel==='أخرى'?'block':'none'}
+function afterChange(){renderPreview();renderTrack();save()}
+
+document.addEventListener('input',e=>{const t=e.target,d=t.dataset;
+ if(d.s){S.settings[d.s]=d.s==='logoH'?+t.value:t.value;if(d.s==='phraseSel')togglePhrase();afterChange();return}
+ if(d.t){S[d.t]=t.type==='checkbox'?t.checked:(d.t==='zoom'?+t.value:t.value);renderPreview();save();return}
+ if(d.crop){S.settings.crop[d.crop]=+t.value;buildLogo();save();return}
+ if(d.gp){curG()[d.gp]=t.value;afterChange();clearTimeout(t._h);t._h=setTimeout(renderEditor,600);return}
+ if(d.r){const r=findRow(d.r);if(!r)return;if(d.p!==undefined)r.parts[+d.p][d.f]=t.value;else r[d.f]=t.value;afterChange()}
+});
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button,.tab').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('#'+b.dataset.tab).classList.add('on');renderTrack()});
+
+function selGrade(id){S.cur=id;renderEditor();afterChange()}
+function addRow(){curG().rows.push(mkRow('','',''));renderEditor();afterChange()}
+function mvRow(id,d){const a=curG().rows,i=a.findIndex(r=>r.id===id),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];renderEditor();afterChange()}
+function delRow(id){if(!confirm('حذف هذا اليوم؟'))return;const g=curG();g.rows=g.rows.filter(r=>r.id!==id);renderEditor();afterChange()}
+function addPart(id){findRow(id).parts.push({sec:'',text:'',note:''});renderEditor();afterChange()}
+function delPart(id,j){findRow(id).parts.splice(j,1);renderEditor();afterChange()}
+function genShades(){const g=curG();g.c2=mix(g.c1,'#ffffff',.88);g.c3=mix(g.c1,'#000000',.22);renderEditor();afterChange()}
+function addGrade(){const n=$('#ngName').value.trim();if(!n)return toast('اكتب اسم الصف');const c=$('#ngColor').value;
+ const g=mkGrade(n,c,mix(c,'#ffffff',.88),mix(c,'#000000',.22),curG().rows.map(r=>mkRow(r.day,r.date,'')));S.grades.push(g);S.cur=g.id;$('#ngName').value='';renderEditor();afterChange()}
+function delGrade(){if(S.grades.length<2)return toast('يجب بقاء صف واحد على الأقل');if(!confirm('حذف '+curG().name+' بكل بياناته؟'))return;S.grades=S.grades.filter(g=>g.id!==S.cur);S.cur=S.grades[0].id;renderEditor();afterChange()}
+function copyDates(){const src=curG();if(!confirm('نسخ أيام وتواريخ '+src.name+' إلى بقية الصفوف؟ (المواد والتحديدات لا تتغير)'))return;
+ S.grades.forEach(g=>{if(g===src)return;src.rows.forEach((r,i)=>{if(g.rows[i]){g.rows[i].day=r.day;g.rows[i].date=r.date}else g.rows.push(mkRow(r.day,r.date,''))})});toast('تم النسخ');afterChange()}
+
+// ===== الشعار =====
+$('#logoFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const m=Math.min(1,700/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*m;c.height=im.height*m;c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+ S.settings.logo=c.toDataURL('image/png');S.settings.crop={t:0,r:0,b:0,l:0};fillSettings();buildLogo();save()};im.src=fr.result};fr.readAsDataURL(f);e.target.value=''};
+function buildLogo(){const st=S.settings;if(!st.logo){LOGO=null;$('#logoThumb').src='logo.png';$('#logoThumb').onerror=function(){this.removeAttribute('src')};renderPreview();return}
+ const im=new Image();im.onload=()=>{const c=st.crop,w=im.naturalWidth,h=im.naturalHeight,x=w*c.l/100,y=h*c.t/100,cw=w*(1-(c.l+c.r)/100),ch=h*(1-(c.t+c.b)/100);if(cw<2||ch<2)return;
+ const cv=document.createElement('canvas');cv.width=cw;cv.height=ch;cv.getContext('2d').drawImage(im,x,y,cw,ch,0,0,cw,ch);LOGO=cv.toDataURL('image/png');$('#logoThumb').src=LOGO;renderPreview()};im.src=st.logo}
+function autoTrim(){const st=S.settings;if(!st.logo)return toast('أرفق الشعار أولًا');const im=new Image();im.onload=()=>{const w=im.width,h=im.height,c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.drawImage(im,0,0);const d=x.getImageData(0,0,w,h).data;
+ let t=h,b=0,l=w,r=0;for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){const i=(yy*w+xx)*4;if(d[i+3]>20&&!(d[i]>240&&d[i+1]>240&&d[i+2]>240)){if(yy<t)t=yy;if(yy>b)b=yy;if(xx<l)l=xx;if(xx>r)r=xx}}
+ if(b<=t)return;st.crop={t:Math.floor(t/h*100),b:Math.floor((h-1-b)/h*100),l:Math.floor(l/w*100),r:Math.floor((w-1-r)/w*100)};fillSettings();buildLogo();save();toast('تم قص الأطراف الزائدة')};im.src=st.logo}
+function removeLogo(){S.settings.logo=null;buildLogo();save()}
+
+// ===== الإخراج =====
+function setPaper(){$('#pageStyle').textContent=S.paper==='A3'?'@page{size:A3 portrait;margin:0}@media print{.page{zoom:1.41421}}':'@page{size:A4 portrait;margin:0}'}
+function doPrint(){setPaper();setTimeout(()=>window.print(),100)}
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+async function libs(pdf){try{if(!window.html2canvas)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+ if(pdf&&!window.jspdf)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');return true}catch(e){toast('التصدير يحتاج اتصالًا بالإنترنت. يمكنك استخدام «طباعة» ثم «حفظ كـ PDF».');return false}}
+async function snap(){const pv=$('#pv'),z=pv.style.zoom;pv.style.zoom=1;await new Promise(r=>setTimeout(r,60));fitAll();const out=[];
+ try{for(const p of pv.querySelectorAll('.page')){p.style.boxShadow='none';out.push(await html2canvas(p,{scale:S.paper==='A3'?3:2,useCORS:true,backgroundColor:'#ffffff'}));p.style.boxShadow=''}}
+ finally{pv.style.zoom=z}return out}
+const toBlob=c=>new Promise(r=>c.toBlob(r,'image/png'));
+const fname=()=>S.showAll?'جداول-اختبارات-كل-الصفوف':'جدول-اختبارات-'+curG().name.replace(/\s+/g,'-');
+async function exportPNG(){if(!await libs())return;toast('جارٍ التصدير...');const cs=await snap(),names=S.showAll?S.grades.map(g=>g.name):[curG().name];
+ for(let i=0;i<cs.length;i++){dl(await toBlob(cs[i]),'جدول-اختبارات-'+names[i].replace(/\s+/g,'-')+'-'+stamp()+'.png');await new Promise(r=>setTimeout(r,500))}}
+async function exportPDF(){if(!await libs(true))return;toast('جارٍ إنشاء PDF...');const cs=await snap(),f=S.paper==='A3'?'a3':'a4',[w,h]=f==='a3'?[297,420]:[210,297];
+ const doc=new window.jspdf.jsPDF({unit:'mm',format:f,orientation:'portrait'});cs.forEach((c,i)=>{if(i)doc.addPage(f,'portrait');doc.addImage(c.toDataURL('image/jpeg',.95),'JPEG',0,0,w,h)});dl(doc.output('blob'),fname()+'-'+stamp()+'.pdf')}
+
+// ===== النسخ الاحتياطي =====
+function backup(){dl(new Blob([JSON.stringify(S)],{type:'application/json'}),'نسخة-احتياطية-جدول-الاختبارات-'+stamp()+'.json')}
+$('#restoreFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=()=>{try{S=normalize(JSON.parse(fr.result));init();save();toast('تم استرجاع النسخة')}catch(er){toast('الملف غير صالح')}};fr.readAsText(f);e.target.value=''};
+function clearSpecs(){if(!confirm('مسح كل التحديدات والملاحظات؟'))return;S.grades.forEach(g=>g.rows.forEach(r=>r.parts=[{sec:'',text:'',note:''}]));renderEditor();afterChange()}
+function resetAll(){if(!confirm('إعادة ضبط كل شيء؟ (يفضل تنزيل نسخة احتياطية أولًا)'))return;S=defaults();init();save()}
+
+// ===== المعلمون والاستيراد =====
+function copyTxt(t){if(navigator.clipboard)navigator.clipboard.writeText(t).catch(()=>prompt('انسخ:',t));else prompt('انسخ:',t)}
+function teacherStruct(){const st=S.settings;return{s:st.school,w:st.wa,p:st.titlePrefix+' '+st.period,y:st.year,g:S.grades.map(g=>[g.name,g.rows.map(r=>r.subject).filter(Boolean),g.c1])}}
+function teacherLink(){const url=location.href.split('#')[0]+'#t='+b64e(JSON.stringify(teacherStruct()));copyTxt(url);
+ toast(location.protocol==='file:'?'نُسخ الرابط، لكنه لن يعمل عند المعلمين إلا بعد نشر الملف على رابط إنترنت (مثل GitHub Pages).':'نُسخ رابط المعلمين، أرسله في مجموعة المعلمين.')}
+function openTeacher(){window.open(location.href.split('#')[0]+'#t='+b64e(JSON.stringify(teacherStruct())),'_blank')}
+function applyEntry(gn,sub,sec,text,note,by){const g=S.grades.find(x=>same(x.name,gn));if(!g||!sub||!text)return false;
+ let r=g.rows.find(x=>same(x.subject,sub));if(!r){r=mkRow('','',sub);g.rows.push(r)}
+ const P={sec:sec||'',text,note:note||'',by:by||''};
+ let i=sec?r.parts.findIndex(p=>norm(p.sec)===norm(sec)):r.parts.findIndex(p=>!p.sec);
+ if(i<0&&r.parts.length===1&&!r.parts[0].text.trim())i=0;
+ if(i>=0)r.parts[i]=P;else r.parts.push(P);return true}
+function doImport(){const txt=$('#imp').value;let ok=0;const bad=[];
+ [...txt.matchAll(/TQ1:([A-Za-z0-9_-]+)/g)].forEach(m=>{try{const d=JSON.parse(b64d(m[1]));d.e.forEach(x=>applyEntry(x.g,x.s,x.c,x.t,x.o,d.n)?ok++:bad.push(x.g+' - '+x.s))}catch(e){bad.push('رمز تالف أو ناقص')}});
+ txt.split('\n').filter(l=>l.includes('|')&&!l.includes('TQ1:')).forEach(l=>{const a=l.split('|').map(s=>s.trim());if(a.length<3)return;
+  applyEntry(a[0],a[1],a[3]||'',a[2].replace(/\s*\/\/\s*/g,'\n'),a[4]||'','لصق')?ok++:bad.push(a[0]+' - '+a[1])});
+ $('#impRes').innerHTML=`تم دمج <b>${ok}</b> تحديد.`+(bad.length?`<br><span class="warn">لم يتم: ${bad.map(esc).join('، ')} (تحقق من اسم الصف)</span>`:'');
+ if(ok)$('#imp').value='';renderEditor();afterChange()}
+function renderTrack(){const el=$('#track');if(!el)return;let tot=0,done=0;
+ el.innerHTML=S.grades.map(g=>`<div class="tg"><b style="color:${g.c3}">${esc(g.name)}</b>${g.rows.map(r=>{const f=r.parts.every(p=>p.text.trim());tot++;if(f)done++;
+  const by=[...new Set(r.parts.map(p=>p.by).filter(Boolean))].join('، ');return`<div class="tr ${f?'ok':'no'}">${f?'✔':'✖'} ${esc(r.subject||'(بدون مادة)')} <small>${esc(r.day)} ${esc(r.date)}</small>${by?` <small>— ${esc(by)}</small>`:''}</div>`}).join('')}</div>`).join('');
+ $('#trackSum').textContent=`(اكتمل ${done} من ${tot})`}
+function copyMissing(){const L=[];S.grades.forEach(g=>g.rows.forEach(r=>{if(!r.parts.every(p=>p.text.trim()))L.push(`- ${g.name}: ${r.subject||'؟'}`)}));
+ if(!L.length)return toast('كل التحديدات مكتملة');copyTxt('نأمل التكرم بإرسال تحديد الاختبار للمواد التالية:\n'+L.join('\n'));toast('نُسخت القائمة')}
+
+// ===== وضع المعلم =====
+let T,TE;
+function teacherMode(t){T=t;try{TE=JSON.parse(localStorage.getItem('tq_teacher'))}catch(e){}TE=TE||{n:'',e:[]};if(!TE.e.length)TE.e=[{g:0,s:'',c:'',t:'',o:''}];
+ document.body.innerHTML=`<div class="tm"><div class="tm-h"><h2>نموذج إدخال تحديد الاختبار</h2><div>${esc(T.s)} — ${esc(T.p)} ${esc(W(T.y))}${HJ}</div></div>
+ <label>اسم المعلم/ـة</label><input id="tn" value="${esc(TE.n)}"><div id="te"></div>
+ <button class="btn2" onclick="tAdd()">+ إضافة صف أو مادة أخرى</button>
+ <div class="tm-f"><button class="btn" onclick="tSend()">إرسال عبر واتساب</button><button class="btn2" onclick="tCopy()">نسخ الرسالة</button></div>
+ <p class="hint">اكتب أرقام الصفحات بوضوح، مثل: <b>من ص 80 إلى ص 139</b>. إذا اختلف التحديد بين الفصول فأضف سطرًا لكل فصل. لا تعدّل الرمز الذي في آخر الرسالة.</p></div><div id="toast"></div>`;
+ $('#tn').oninput=e=>{TE.n=e.target.value;tSave()};tRender()}
+function tSave(){localStorage.setItem('tq_teacher',JSON.stringify(TE))}
+function tRender(){$('#te').innerHTML=TE.e.map((x,i)=>{const G=T.g[x.g]||T.g[0];return`<div class="row-card" style="border-color:${G[2]};--c1:${G[2]};--c3:${G[2]}">
+ <div class="rc-top"><select data-i="${i}" data-k="g" style="width:auto;flex:1">${T.g.map((g,j)=>`<option value="${j}" ${j==x.g?'selected':''}>${esc(g[0])}</option>`).join('')}</select>
+ <select data-i="${i}" data-k="s" style="width:auto;flex:1"><option value="">— اختر المادة —</option>${G[1].map(s=>`<option ${s===x.s?'selected':''}>${esc(s)}</option>`).join('')}</select>${TE.e.length>1?`<button onclick="tDel(${i})">✕</button>`:''}</div>
+ <input data-i="${i}" data-k="c" value="${esc(x.c)}" placeholder="الفصل (اختياري) — اتركه فارغًا إذا كان التحديد لكل الفصول" style="margin-top:6px">
+ <textarea data-i="${i}" data-k="t" rows="4" placeholder="التحديد..." style="margin-top:6px">${esc(x.t)}</textarea>
+ <input data-i="${i}" data-k="o" value="${esc(x.o)}" placeholder="ملاحظة (اختياري)" style="margin-top:6px"><div class="tprev">${fmt(x.t)}</div></div>`}).join('');
+ document.querySelectorAll('#te [data-k]').forEach(el=>el.oninput=()=>{const x=TE.e[+el.dataset.i],k=el.dataset.k;x[k]=el.value;
+  if(k==='g'){x.g=+el.value;x.s='';tRender()}if(k==='t')el.parentElement.querySelector('.tprev').innerHTML=fmt(el.value);tSave()})}
+function tAdd(){const l=TE.e[TE.e.length-1];TE.e.push({g:l?l.g:0,s:l?l.s:'',c:'',t:'',o:''});tRender();tSave()}
+function tDel(i){TE.e.splice(i,1);tRender();tSave()}
+function tMsg(){if(!TE.n.trim()){toast('اكتب اسمك أولًا');return null}const E=TE.e.filter(x=>x.s&&x.t.trim());if(!E.length){toast('اختر المادة واكتب التحديد');return null}
+ const P={n:TE.n.trim(),e:E.map(x=>({g:T.g[x.g][0],s:x.s,c:x.c,t:x.t,o:x.o}))};
+ return`تحديد ${T.p}\nالمعلم: ${P.n}\n\n`+P.e.map(x=>`▪ ${x.g} - ${x.s}${x.c?' ('+x.c+')':''}:\n${x.t}${x.o?'\nملاحظة: '+x.o:''}`).join('\n\n')+`\n\n(رمز الدمج، لا تعدّله)\nTQ1:${b64e(JSON.stringify(P))}`}
+function tSend(){const m=tMsg();if(!m)return;let n=String(T.w||'').replace(/\D/g,'');if(n.startsWith('05'))n='966'+n.slice(1);else if(n.length===9&&n.startsWith('5'))n='966'+n;
+ window.open('https://wa.me/'+n+'?text='+encodeURIComponent(m),'_blank')}
+function tCopy(){const m=tMsg();if(m){copyTxt(m);toast('نُسخت الرسالة، الصقها في واتساب')}}
+
+// ===== التشغيل =====
+function init(){fillSettings();renderEditor();buildLogo();renderTrack()}
+const hm=location.hash.match(/^#t=(.+)/);
+if(hm){try{teacherMode(JSON.parse(b64d(hm[1])))}catch(e){document.body.innerHTML='<p style="padding:30px">الرابط غير صالح، اطلب رابطًا جديدًا.</p>'}}
+else{init();if(document.fonts)document.fonts.ready.then(fitAll)}
+window.addEventListener('hashchange',()=>location.reload());
+</script>
+</body>
+</html>
