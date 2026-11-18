@@ -51,29 +51,29 @@ textarea{resize:vertical;line-height:1.6}
 #toast{position:fixed;bottom:20px;left:20px;background:#222;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:99;max-width:420px;line-height:1.6}
 .warn{color:#c0392b;font-weight:700;font-size:12px}
 /* ===== الصفحة المطبوعة ===== */
-.page{width:210mm;height:297mm;background:#fff;margin:0 auto 24px;box-shadow:0 4px 18px rgba(0,0,0,.15);overflow:hidden;--k:1;--m:1;position:relative}
+.page{width:210mm;height:297mm;background:#fff;margin:0 auto 24px;box-shadow:0 4px 18px rgba(0,0,0,.15);overflow:hidden;--k:1;--m:1;--f:1;--p:1;--lh:1.75;position:relative}
 .pin{height:100%;padding:9mm 10mm 6mm;display:flex;flex-direction:column}
 .hd{display:flex;align-items:center;gap:14px;border:1.5px solid var(--c2);border-radius:14px;padding:8px 16px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
 .hd img{display:block;max-width:150px;object-fit:contain}
 .vl{width:2px;align-self:stretch;background:var(--c1);opacity:.55;margin:6px 0}
-.sch{flex:1;text-align:center}
-.s1{font-weight:800;color:#1f4e9c;font-size:22px}
-.s2{font-size:14px;color:#444;margin-top:3px}
+.sch{flex:1;text-align:center;min-width:0}
+.s1{font-weight:800;color:#1f4e9c;font-size:22px;white-space:nowrap}
+.s2{font-size:14px;color:#444;margin-top:3px;white-space:nowrap}
 .ph{flex:0 0 28%;text-align:center;font-weight:800;color:var(--c3);font-size:18px}
 .ttl{text-align:center;font-size:36px;font-weight:800;color:var(--c3);margin:14px 0 2px}
 .sub{text-align:center;color:#555;font-size:16px;font-weight:500}
 .pill{align-self:center;background:var(--c1);color:#fff;font-weight:800;font-size:21px;padding:6px 46px;border-radius:30px;margin:10px 0 12px}
 .tbl{width:100%;border-collapse:separate;border-spacing:0;border:2px solid var(--c1);border-radius:12px;overflow:hidden;font-size:calc(14px*var(--k))}
-.tbl th{background:var(--c1);color:#fff;padding:9px;font-size:calc(16px*var(--k));font-weight:800;border-left:1.5px solid rgba(255,255,255,.75)}
+.tbl th{background:var(--c1);color:#fff;padding:9px;font-size:calc(16px*var(--f));font-weight:800;border-left:1.5px solid rgba(255,255,255,.75)}
 .tbl th:last-child{border-left:0}
-.tbl td{padding:calc(9px*var(--k)) 10px;border-top:1.5px solid var(--c1);border-left:1.5px solid var(--c1);vertical-align:middle}
+.tbl td{padding:calc(9px*var(--p)) 10px;border-top:1.5px solid var(--c1);border-left:1.5px solid var(--c1);vertical-align:middle}
 .tbl td:last-child{border-left:0}
 .tbl tbody tr:nth-child(odd) td{background:#fff}
 .tbl tbody tr:nth-child(even) td{background:var(--c2)}
-.tbl td.dy{font-weight:800;color:var(--c3);text-align:center;width:12%;font-size:calc(16px*var(--k))}
-.tbl td.dt{text-align:center;width:16%;font-weight:700}
-.tbl td.sb{font-weight:800;color:var(--c3);text-align:center;width:16%;font-size:calc(19px*var(--k))}
-.tbl td.sp{line-height:1.75}
+.tbl td.dy{font-weight:800;color:var(--c3);text-align:center;width:12%;font-size:calc(17px*var(--f))}
+.tbl td.dt{text-align:center;width:16%;font-weight:700;white-space:nowrap;padding-left:4px;padding-right:4px;font-size:calc(15px*var(--f))}
+.tbl td.sb{font-weight:800;color:var(--c3);text-align:center;width:16%;font-size:calc(19px*var(--f))}
+.tbl td.sp{line-height:var(--lh);font-size:calc(14px*var(--k))}
 .pg{font-weight:800;color:var(--c3)}
 .n{font-weight:800}
 .sec{display:inline-block;background:var(--c1);color:#fff;border-radius:6px;padding:0 8px;font-size:.85em;font-weight:700;margin-bottom:2px}
@@ -105,7 +105,7 @@ textarea{resize:vertical;line-height:1.6}
 <body>
 <div class="app">
  <aside class="ed">
-  <div class="ed-h"><span>مولد جدول الاختبارات</span><small id="saveInd">محفوظ تلقائيًا</small></div>
+  <div class="ed-h"><span>مولد جدول الاختبارات - تصميم أبو جنى</span><small id="saveInd">محفوظ تلقائيًا</small></div>
   <div class="tabs">
    <button data-tab="t1" class="on">الإعدادات</button>
    <button data-tab="t2">الصفوف والجدول</button>
@@ -116,8 +116,8 @@ textarea{resize:vertical;line-height:1.6}
   <!-- الإعدادات -->
   <section class="tab on" id="t1">
    <div class="box"><h4>الترويسة</h4>
-    <label>اسم المدرسة</label><input data-s="school">
-    <label>الإدارة</label><input data-s="admin">
+    <label>اسم المدرسة</label><input data-s="school" placeholder="اسم المدرسة، مثل: مدرسة الأمل الابتدائية">
+    <label>الإدارة</label><input data-s="admin" placeholder="مثل: الإدارة العامة للتعليم بالمنطقة الشرقية">
     <label>العبارة الجانبية</label>
     <select data-s="phraseSel"><option>التوجيه الطلابي</option><option>شؤون الطلاب</option><option>أخرى</option></select>
     <input data-s="phraseCustom" id="phraseCustom" placeholder="اكتب العبارة" style="margin-top:5px">
@@ -139,18 +139,18 @@ textarea{resize:vertical;line-height:1.6}
    <div class="box"><h4>العنوان</h4>
     <div class="grid2">
      <div><label>بداية العنوان</label><input data-s="titlePrefix"></div>
-     <div><label>الفترة</label><input data-s="period" list="periods"></div>
-     <div><label>الفصل الدراسي</label><input data-s="semester" list="sems"></div>
-     <div><label>العام (هـ)</label><input data-s="year"></div>
+     <div><label>الفترة</label><select data-s="period"><option>الفترة الأولى</option><option>الفترة الثانية</option></select></div>
+     <div><label>الفصل الدراسي</label><select data-s="semester"><option>الفصل الدراسي الأول</option><option>الفصل الدراسي الثاني</option></select></div>
+     <div><label>العام (هـ)</label><input data-s="year" placeholder="مثل: 1448"></div>
     </div>
    </div>
    <div class="box"><h4>التنبيهات</h4>
     <label>عنوان التنبيهات</label><input data-s="notesTitle">
-    <label>النقاط (كل سطر نقطة)</label><textarea data-s="notes" rows="5"></textarea>
+    <label>النقاط (كل سطر نقطة)</label><textarea data-s="notes" rows="5" placeholder="أضف ملاحظات أو تنبيهات حول الاختبار والاستذكار أو إحضار الأدوات لولي الأمر أو الطالب (كل سطر نقطة)"></textarea>
    </div>
    <div class="box"><h4>الخاتمة</h4>
     <label>عبارة الختام</label><input data-s="closing">
-    <label>اسم مدير المدرسة</label><input data-s="principal">
+    <label>اسم مدير المدرسة</label><input data-s="principal" placeholder="اكتب اسم المدير، مثل: أ/ ...">
    </div>
   </section>
 
@@ -219,8 +219,6 @@ textarea{resize:vertical;line-height:1.6}
 </div>
 
 <datalist id="subjList"><option>لغتي</option><option>رياضيات</option><option>علوم</option><option>اللغة الإنجليزية</option><option>الدراسات الإسلامية</option><option>القرآن الكريم</option><option>الدراسات الاجتماعية</option><option>المهارات الرقمية</option><option>التربية الفنية</option><option>التربية البدنية</option><option>التفكير الناقد</option><option>المهارات الحياتية والأسرية</option></datalist>
-<datalist id="periods"><option>الفترة الأولى</option><option>الفترة الثانية</option><option>الفترة الثالثة</option></datalist>
-<datalist id="sems"><option>الفصل الدراسي الأول</option><option>الفصل الدراسي الثاني</option><option>الفصل الدراسي الثالث</option></datalist>
 <div id="toast"></div>
 
 <script>
@@ -238,9 +236,11 @@ function toast(m,ms){const t=$('#toast');t.innerHTML=m;t.style.display='block';c
 // حرف الهاء بصيغة البداية (ﻫـ) ليظهر ممدودًا دائمًا حتى في التصدير
 const HJ='\uFEEBـ';
 // التاريخ: يُكتب طبيعيًا (اليوم/الشهر/العام) ويُعرض من اليمين: اليوم ثم الشهر ثم العام
-function fmtDate(d){const s=W(d).replace(/[هـﻫ]/g,'').trim();let a=s.split(/[\s\/\\\-.]+/).filter(Boolean);if(!a.length)return'';
+// لا يُضاف حرف هـ تلقائيًا للتاريخ؛ يظهر فقط إذا كتبه المستخدم
+function fmtDate(d){const raw=W(d),hasH=/[هـﻫ]/.test(raw);const s=raw.replace(/[هـﻫ]/g,'').trim();let a=s.split(/[\s\/\\\-.]+/).filter(Boolean);if(!a.length)return'';
  if(a.length===3&&a[0].length===4&&a[2].length<=2)a.reverse();
- const last=a.length-1,out=a.map((x,i)=>esc(x)+(i===last&&x.length===4?HJ:''));return out.join('\u200F / \u200F')}
+ return a.map(esc).join('\u200F/\u200F')+(hasH?HJ:'')}
+const yrTxt=y=>{y=W(y).replace(/[هـﻫ]/g,'').trim();return y?esc(y)+HJ:''};
 const stamp=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds())};
 // تنزيل قابل للتكرار بلا حد + رابط احتياطي يدوي
 function dl(blob,name){const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=name;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>a.remove(),1500);setTimeout(()=>URL.revokeObjectURL(u),120000);
@@ -258,19 +258,14 @@ function fmt(t){
 function mkRow(day,date,subject,parts){return{id:uid(),day,date,subject,parts:parts||[{sec:'',text:'',note:''}]}}
 function mkGrade(name,c1,c2,c3,rows){return{id:uid(),name,c1,c2,c3,rows:rows||[]}}
 function defaults(){
- const base=[['الخميس','23/6/1448','علوم'],['الأحد','26/6/1448','رياضيات'],['الاثنين','27/6/1448','لغتي'],['الأربعاء','29/6/1448','اللغة الإنجليزية']];
+ // جداول نظيفة: أربعة أيام فارغة لكل صف بدون تواريخ أو مواد أو تحديد
  const g=[['الصف الثالث','#7258A4','#EFEAF7','#5A4488'],['الصف الرابع','#3D7EB9','#E4EEF8','#2C5F93'],['الصف الخامس','#07A869','#E3F5EC','#057A4D'],['الصف السادس','#E27A2E','#FCEBDD','#B85A14']]
-  .map(a=>mkGrade(...a,base.map(b=>mkRow(...b))));
- const r=g[0].rows;
- r[0].parts=[{sec:'',text:'الفصل الرابع: الدرس الأول والدرس الثاني - الفصل الخامس: الدرس الأول والدرس الثاني\nمن ص 105 إلى ص 147',note:''}];
- r[1].parts=[{sec:'',text:'الوحدة الثالثة والوحدة الرابعة\nمن ص 80 إلى ص 139',note:'سيحمل الطالب أوراق عمل تساعد على المذاكرة.'}];
- r[2].parts=[{sec:'',text:'الوحدة الثالثة: درس التعاون ودرس الإيثار\nمن ص 102 إلى ص 134',note:''}];
- r[3].parts=[{sec:'فصل أ، ب',text:'الوحدات (4 - 5 - 6)\nمن ص 36 إلى ص 39 + اختبار عملي',note:''},{sec:'فصل ج',text:'المذاكرة من أوراق العمل التي ستوزع لاحقًا',note:''}];
- return{settings:{school:'مدرسة حنين الابتدائية',admin:'الإدارة العامة للتعليم بالمنطقة الشرقية',phraseSel:'التوجيه الطلابي',phraseCustom:'',
-  logo:null,logoH:70,crop:{t:0,r:0,b:0,l:0},titlePrefix:'جدول اختبارات',period:'الفترة الثانية',semester:'الفصل الدراسي الأول',year:'1448',
+  .map(a=>mkGrade(...a,[1,2,3,4].map(()=>mkRow('','',''))));
+ return{settings:{school:'',admin:'',phraseSel:'التوجيه الطلابي',phraseCustom:'',
+  logo:null,logoH:70,crop:{t:0,r:0,b:0,l:0},titlePrefix:'جدول اختبارات',period:'الفترة الأولى',semester:'الفصل الدراسي الأول',year:'',
   notesTitle:'تنبيهات للطالب وولي الأمر',
-  notes:'الاختبار خلال اليوم الدراسي وفق الجدول اليومي، ويعود الطالب إلى حصصه بعده.\nإحضار الكتاب والأدوات المدرسية، والنوم المبكر في ليلة الاختبار.\nمراجعة الدروس المحددة مع المعلم أولًا بأول، والتواصل معه عند أي استفسار.\nالحرص على إحضار قلم الرصاص والممحاة يوم الاختبار.',
-  closing:'دعواتنا للجميع بالتوفيق والنجاح',principal:'أ/ فيحان بن عائد البقمي',wa:''},
+  notes:'',
+  closing:'دعواتنا للجميع بالتوفيق والنجاح',principal:'',wa:''},
   grades:g,cur:g[0].id,showAll:false,zoom:0.75,paper:'A4'};
 }
 function normalize(o){const d=defaults();o=o||{};o.settings={...d.settings,...(o.settings||{})};o.settings.crop={...d.settings.crop,...(o.settings.crop||{})};
@@ -292,20 +287,23 @@ function pageHTML(g){
  <header class="hd"><img src="${LOGO||'logo.png'}" style="height:${st.logoH}px" onerror="this.style.display='none'"><div class="vl"></div>
  <div class="sch"><div class="s1">${esc(st.school)}</div><div class="s2">${esc(st.admin)}</div></div><div class="vl"></div><div class="ph">${ph}</div></header>
  <h1 class="ttl">${esc(st.titlePrefix)} ${esc(st.period)}</h1>
- <div class="sub">${esc(st.semester)} – العام الدراسي ${esc(W(st.year).replace(/[هـﻫ]/g,'').trim())}${HJ}</div>
+ <div class="sub">${esc(st.semester)}${yrTxt(st.year)?' – العام الدراسي '+yrTxt(st.year):''}</div>
  <div class="pill">${esc(g.name)}</div>
  <table class="tbl"><thead><tr><th>اليوم</th><th>التاريخ</th><th>المادة</th><th>تحديد الاختبار</th></tr></thead><tbody>${rows}</tbody></table>
  <div class="gap"></div>
  ${notes?`<div class="nt"><div class="nth">${esc(st.notesTitle)}</div><ol>${notes}</ol></div>`:''}
- <div class="cl"><span>${esc(st.closing)}</span><span>مدير المدرسة: ${esc(st.principal)}</span></div>
- <div class="ft">${ph} - ${esc(st.school)} - العام ${esc(W(st.year).replace(/[هـﻫ]/g,'').trim())}${HJ}</div></div></div>`;
+ <div class="cl"><span>${esc(st.closing)}</span>${st.principal.trim()?`<span>مدير المدرسة: ${esc(st.principal)}</span>`:''}</div>
+ <div class="ft">${[ph,esc(st.school),yrTxt(st.year)?'العام '+yrTxt(st.year):''].filter(Boolean).join(' - ')}</div></div></div>`;
 }
 function renderPreview(){const pv=$('#pv');pv.innerHTML=(S.showAll?S.grades:[curG()]).map(pageHTML).join('');pv.style.zoom=S.zoom;requestAnimationFrame(fitAll)}
-function fitAll(){let bad=0;document.querySelectorAll('#pv .page').forEach(p=>{const pin=p.firstElementChild,over=()=>pin.scrollHeight>pin.clientHeight+1;let k=1.15,m=1;p.style.setProperty('--k',k);p.style.setProperty('--m',m);
- // 1) تصغير الجدول قليلًا  2) ثم تصغير التنبيهات وخانة المدير  3) ثم الجدول أكثر
- while(over()&&k>.88){k-=.03;p.style.setProperty('--k',k.toFixed(2))}
- while(over()&&m>.68){m-=.04;p.style.setProperty('--m',m.toFixed(2))}
- while(over()&&k>.6){k-=.03;p.style.setProperty('--k',k.toFixed(2))}if(over())bad++});
+function fitHead(p){[['.s1',22],['.s2',14]].forEach(([s,f])=>{const el=p.querySelector(s);if(!el)return;el.style.fontSize=f+'px';while(el.scrollWidth>el.clientWidth+1&&f>9){f-=.5;el.style.fontSize=f+'px'}})}
+function fitAll(){let bad=0;document.querySelectorAll('#pv .page').forEach(p=>{fitHead(p);const pin=p.firstElementChild,over=()=>pin.scrollHeight>pin.clientHeight+1;let k=1.15,m=1,f=1,pd=1,lh=1.75;const set=(n,v)=>p.style.setProperty(n,v.toFixed(2));set('--k',k);set('--m',m);set('--f',f);set('--p',pd);set('--lh',lh);
+ // اليوم والتاريخ والمادة بحجم ثابت. الترتيب: 1) تقليل الفراغات داخل الجدول  2) تقليل تباعد أسطر التحديد  3) تصغير التنبيهات وخانة المدير  4) تصغير خط التحديد بحد أدنى واضح  5) آخر حل: تصغير بسيط جدًا للكل
+ while(over()&&pd>.4){pd-=.1;set('--p',pd)}
+ while(over()&&lh>1.45){lh-=.05;set('--lh',lh)}
+ while(over()&&m>.68){m-=.04;set('--m',m)}
+ while(over()&&k>.85){k-=.03;set('--k',k)}
+ while(over()&&(k>.72||f>.9)){if(k>.72){k-=.03;set('--k',k)}if(f>.9){f-=.02;set('--f',f)}}if(over())bad++});
  $('#fitWarn').textContent=bad?'تنبيه: المحتوى أطول من الصفحة، فاختصر التحديد أو التنبيهات.':''}
 
 // ===== المحرر =====
@@ -317,7 +315,7 @@ function renderEditor(){
  $('#rows').innerHTML=g.rows.map((r,i)=>`<div class="row-card" style="border-color:${g.c1}">
  <div class="rc-top"><span class="num" style="background:${g.c1}">${i+1}</span>
  <select data-r="${r.id}" data-f="day">${DAYS.map(d=>`<option value="${d}" ${d===r.day?'selected':''}>${d||'— اليوم —'}</option>`).join('')}</select>
- <input class="w-date" dir="ltr" data-r="${r.id}" data-f="date" value="${esc(r.date)}" placeholder="23/6/1448" title="اكتب: اليوم/الشهر/العام — وحرف هـ اختياري">
+ <input class="w-date" dir="ltr" data-r="${r.id}" data-f="date" value="${esc(r.date)}" placeholder="23/6/1448" title="اكتب: اليوم/الشهر/العام — حرف هـ لا يُضاف تلقائيًا، واكتبه إن رغبت">
  <input data-r="${r.id}" data-f="subject" value="${esc(r.subject)}" placeholder="المادة" list="subjList">
  <button onclick="mvRow('${r.id}',-1)" title="أعلى">▲</button><button onclick="mvRow('${r.id}',1)" title="أسفل">▼</button><button onclick="delRow('${r.id}')" title="حذف">🗑</button></div>
  ${r.parts.map((p,j)=>`<div class="part-ed"><div class="flex"><input data-r="${r.id}" data-p="${j}" data-f="sec" value="${esc(p.sec)}" placeholder="الفصل (اختياري) مثل: فصل أ، ب">
@@ -415,7 +413,7 @@ function copyMissing(){const L=[];S.grades.forEach(g=>g.rows.forEach(r=>{if(!r.p
 // ===== وضع المعلم =====
 let T,TE;
 function teacherMode(t){T=t;try{TE=JSON.parse(localStorage.getItem('tq_teacher'))}catch(e){}TE=TE||{n:'',e:[]};if(!TE.e.length)TE.e=[{g:0,s:'',c:'',t:'',o:''}];
- document.body.innerHTML=`<div class="tm"><div class="tm-h"><h2>نموذج إدخال تحديد الاختبار</h2><div>${esc(T.s)} — ${esc(T.p)} ${esc(W(T.y))}${HJ}</div></div>
+ document.body.innerHTML=`<div class="tm"><div class="tm-h"><h2>نموذج إدخال تحديد الاختبار</h2><div>${esc(T.s)} — ${esc(T.p)} ${yrTxt(T.y)}</div></div>
  <label>اسم المعلم/ـة</label><input id="tn" value="${esc(TE.n)}"><div id="te"></div>
  <button class="btn2" onclick="tAdd()">+ إضافة صف أو مادة أخرى</button>
  <div class="tm-f"><button class="btn" onclick="tSend()">إرسال عبر واتساب</button><button class="btn2" onclick="tCopy()">نسخ الرسالة</button></div>
